@@ -1,0 +1,334 @@
+######################################## Easy Git ########################################
+# 1. Snapshots is a state of something (e.g. a folder) at a specific time point.
+#    Git basically works in a way that saves & loads these snapshots.
+# 2. Let's say mother directory is a directory holding .git, thus supervised by Git.
+# 3. Then, child directories in that mother directory can not be tracked unless 
+#    they have some contents in them (Git only tracks contents, not empty folders.).
+# 
+#                     		                                    Written by Kim, Wiback,
+#                                                              Mon, Feb 8, 2016, Ver 1.1.
+#                                                              Tue, Feb 9, 2016, Ver 1.2.
+#                                                             Wed, Feb 10, 2016, Ver 1.3.
+##########################################################################################
+
+
+
+
+
+##########################################################################################
+# Adjust this file's size for best look. No statements should be described in 2 lines.
+##########################################################################################
+
+
+
+
+
+###################################### Terminology ######################################
+
+
+
+#########################################################################################
+# References (aka Refs), represent long hash codes in a short & easy manner (e.g., HEAD).
+#########################################################################################
+
+## Relative Refs
+# ~n == Sequence numbering
+# ^n == Generation numbering
+
+
+
+#######
+# HEADs
+#######
+# HEAD == Leading point of a branch
+# FETCH_HEAD == Latest record of a branch that one fetched from a remote repository (REPO)
+# ORIG_HEAD == Recorded position of HEAD before a drastic movements like reset, etc
+# MERGE_HEAD == Commit(s) which one is merging into his/her branch
+# CHERRY_PICK_HEAD == Commit which one is cherry-picking
+
+
+
+###############################################
+# refspec == (+)local_source:remote_destination
+###############################################
+# When pull: the + tells Git to force update local Refs even if it isn’t a fast-forward.
+# When push: the + tells Git to force update remote Refs even if it isn’t a fast-forward.
+
+
+
+
+
+##################### Basic controls (options can be used together.) #####################
+
+
+
+############
+# Initiating
+############
+$ mkdir directory /////////// Making a directory
+$ cd directory    /////////// Move to the directory.
+$ git init        /////////// Initiate Git.
+
+
+
+##############################
+# Concept of File Status Cycle 
+##############################
+#                          <======================= Tracking =======================>       
+#    <======== Working directory, WD (work tree) ========>                                 
+#    Untracked /////////// Unmodified /////////// Modified /////////// Index (staged)      
+#                                                                                          
+#                                     Adding file                                          
+#              ------------------------------------------------------>                     
+#                                                                                          
+#                                      If edited           Adding file                     
+#                                     ---------->          ---------->                     
+#                                                                                          
+#                                     Unmodifying           Resetting                      
+#                                     <----------          <----------                     
+#                                                                                          
+#                                     Committed, then it's a snapshot,                      
+#                                     a Commit in a repository (REPO).                     
+#                                     <-------------------------------                     
+#                                                                                          
+#                          Resetting (tracked -> untracked)                                
+#              <------------------------------------------------------                     
+
+
+
+###########################
+# File Status Cycle: adding
+###########################
+$ git add file /////////// Indexing (staging) a file
+$         -p   /////////// Partial adding (staging)
+$         -i   /////////// Calling vi interface
+$          *   /////////// Using wild card (e.g., "*.txt") is possible.
+$          .   /////////// Everything (not same as *)
+$         -u   /////////// Indexing all files which were committed before
+
+
+
+###############################
+# File Status Cycle: committing
+###############################
+$ git commit -m "comments" /////////// Without -m "comments", vi interface kicks in.
+$ git commit -a            /////////// Option "-a (adding)" works for tracked files only.
+
+
+
+############################################
+# File Status Cycle: unmodifying & resetting
+############################################
+$ git checkout file            /////////// Modified -> Unmodified
+$ git reset HEAD file          /////////// Dismiss Indexing (unstaging, untracking).
+
+
+
+####################################
+# File Status Cycle: untracked files
+####################################
+$ git clean -n (-d) (-x) (-f) /////////// Demo-erazing 
+$           -f                /////////// Erazing all untracked files
+$           -d -f             /////////// Including directories
+$           -d -x -f          /////////// Including files assigned in .gitignore too
+
+
+
+############################################
+# File Status Cycle: checking for any change
+############################################
+
+## File Status Cycle
+$ git status                    /////////// Display File Status Cycle.
+$            -s                 /////////// Shorter version
+
+## Checking differences
+$ git diff                      /////////// Modified vs Last staged (Index)
+$          --staged             /////////// Staged (Index) vs Last unmodified (Commit)
+$          --name-only          /////////// Display names of changed files.
+$                      file     /////////// For a specific file
+$ git diff bd6edf 5d6eaf        /////////// Comparing Commits by hash codes
+$		          file   /////////// For a specific file
+$ git diff bd6edf:f1 5d6eaf:f2  /////////// For specific files
+$ git diff HEAD~n               /////////// (Un)modified vs Unmodified (certain Commit)
+$          --staged HEAD~n      /////////// Staged (Index) vs Unmodified (certain Commit) 
+$                          file /////////// For a specific file
+
+
+
+
+
+################# Intermediate controls (options can be used together.) #################
+
+
+
+####################
+# Remote Repo basics
+####################
+$ git clone url                  /////////// Copying remote Repo (auto track, upstream)
+$ git remote                     /////////// Display remote Repos.
+$            -v                  /////////// Detail display of remote Repos
+$            add remote_Repo url /////////// Adding a remote Repo
+$ git checkout remote_branch     /////////// Creating remote branch in local 
+
+
+
+#################################
+# Push 
+# Pull (fetch + merge FETCH_HEAD)
+#################################
+$ git push (remote_Repo) (refspec)  /////////// Default: match:match, all at once
+$ git push (remote_url) (refspec)   /////////// Default url: that bares upstream branch.
+$          -u                       /////////// Tracking (upstreaming)
+$ git fetch (remote_Repo) (refspec) /////////// Default: branch specific, one by one
+$ git fetch (remote_url) (refspec)  /////////// Default url: that bares upstream branch.
+$ git pull (remote_Repo) (refspec)  /////////// Default: branch specific, one by one
+$ git pull (remote_url) (refspec)   /////////// Default url: that bares upstream branch.
+
+
+
+#####################
+# Remote Repo edition
+#####################
+$ git push --delete remote_Repo remote_branch   /////////// Deletion of remote branch
+$ git push remote_Repo local_tag_name           /////////// Uploading tag
+$          --tags                               /////////// Uploading all tags
+$ git push --delete remote_Repo remote_tag      /////////// Deletion of remote tag
+$ git remote set-url remote_Repo new_url        /////////// Changing url
+$ git remote rename remote_Repo new_remote_Repo /////////// Renaming
+
+
+
+
+
+################### Advanced controls (options can be used together.) ###################
+
+
+
+###########
+# Branching
+###########
+
+## Branching basics
+$ git branch                          /////////// Listing all branches
+$            branch_name              /////////// Making a new branch
+$            -m old_branch new_branch /////////// Changing name
+$            -d branch_name           /////////// Deleting
+$            -D branch_name           /////////// Forced deletion
+$ git checkout branch_name            /////////// Moving to other branch  
+$              bd6edf                 /////////// Moving to other Commit (hash code)
+$              -b branch_name         /////////// Making + Moving
+
+## Merging branches
+$ git merge branch_name               /////////// Merge branch_name to current HEAD.
+$           --no-ff                   /////////// No fast-forward merging
+$           --abort                   /////////// Aborting
+
+
+
+#########
+# Tagging
+#########
+$ git tag                    /////////// List all tags.
+$         tag_name           /////////// Make a normal tag.
+$         -a tag_name        /////////// Make a annotation tag.
+$         -m                 /////////// Adding comments (here, annotation)
+$         -n                 /////////// See all annotations.
+$         -d tag_name        /////////// Deletion
+$                     bd6edf /////////// Using Commit's hash code to put a tag there
+
+
+
+################
+# Commit control
+################
+
+## Tracking Commits  
+$ git log                     /////////// All Commits' information
+$         --decorate          /////////// All Commits' information (detailed)
+$         --name-only         /////////// Display names of changed files.
+$         --grep "comments"   /////////// Display all logs with specific comments.
+$ git show HEAD~n             /////////// Certain Commit's information in specificity 
+$          bd6edf             /////////// Certain Commit's information in specificity
+$                 --name-only /////////// Display names of changed files.
+
+## Tracking HEADs 
+$ git reflog                  /////////// Showing history of HEADs
+$            branch_name      /////////// Showing history of HEADs of a specific branch
+
+## Amending Commits
+$ git commit --amend          /////////// Without staging, it's merely editing comments.
+
+## Rebasing Commits
+$ git rebase -i HEAD~n        /////////// Rebase to HEAD~n (using interface, vi editor).
+$            -i bd6edf        /////////// Rebase to certain Commit (using hash code & vi).
+$            --abort          /////////// Aborting
+$            --continue       /////////// Continuing 
+
+## Resetting Commits
+$ git reset --hard HEAD~n     /////////// Reset WD + Index + HEAD's location. 
+$ git reset --hard bd6edf     /////////// Reset WD + Index + HEAD's location. 
+$           --mixed           /////////// Reset Index + HEAD's location. 
+$           --soft            /////////// Reset HEAD's location. 
+
+## Canceling rebases (figure out latest Commit before the rebasing through 'git reflog'.)
+$ git reset --hard bd6edf     /////////// Reset WD + Index + HEAD's location.
+$ git reset --hard ORIG_HEAD  /////////// Cancel latest rebase.
+
+## Canceling resets
+$ git reset --hard ORIG_HEAD  /////////// Cancel latest reset.
+
+## Cherry picking
+$ git cherry-pick bd6edf      /////////// Absorbing a Commit from anywhere
+
+
+
+############################
+# Stash == Temporary storage
+############################
+$ git stash save "message"   /////////// Stashing is impossible with untracked files.
+$ git stash list             /////////// Listing
+$ git stash pop (stash@{n})  /////////// When not specified, latest one will be popped.
+$ git stash drop (stash@{n}) /////////// When not specified, latest one will be deleted.
+$ git stash clear            /////////// Clearing all stashes
+
+
+
+
+
+######################################### Others ########################################
+
+
+
+#############
+# Preferences
+#############
+$ git config --global push.default matching /////////// All matched branches at once.
+$ git config --global push.default simple   /////////// Current branch to it's upstream.
+$ git config --global user.name username    /////////// Setting user name
+$ git config --global user.email address    /////////// Setting user e-mail
+$ git config --global color.ui auto         /////////// Coloring syntax
+$ git config --global --list                /////////// List all tuned properties.
+
+
+
+######
+# Tips
+######
+
+## .gitignore
+$ vi ~/.gitignore                                    /////////// Creating a .gitignore 
+$ git config --global core.excludesfile ~/.gitignore /////////// Global ignorance setting
+$ cat ~/.gitconfig                                   /////////// Check global config file.
+
+## README
+$ touch README.md                                    /////////// Making a Markdown README
+
+## Self upstreaming
+$ git branch --set-upstream-to=remote_Repo/remote_branch local_branch
+
+## Changing & Moving file (or directory)
+$ git mv old_f_name new_f_name
+
+## Removing
+$ git rm file
